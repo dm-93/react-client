@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import List from "@mui/material/List";
-import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -16,7 +15,6 @@ import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import Header from "../header/Header";
-import { Tournaments } from "../pages/tournaments/Tournaments";
 
 const drawerWidth = 240;
 
@@ -43,12 +41,11 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: "flex-end",
 }));
 
-export default function Navbar() {
+export default function Navbar({ pages, settings, children }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -63,7 +60,12 @@ export default function Navbar() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <Header open={open} handleDrawerOpen={handleDrawerOpen}/>
+      <Header
+        pages={pages}
+        settings={settings}
+        open={open}
+        handleDrawerOpen={handleDrawerOpen}
+      />
       <Drawer
         sx={{
           width: drawerWidth,
@@ -79,11 +81,7 @@ export default function Navbar() {
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
+            {theme.direction === "ltr" ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
         <Divider />
@@ -115,7 +113,7 @@ export default function Navbar() {
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
-        <Tournaments/>
+        {children}
       </Main>
     </Box>
   );
