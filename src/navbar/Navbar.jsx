@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -12,10 +13,11 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import Header from "../header/Header";
-
+import PersonIcon from "@mui/icons-material/Person";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import GroupsIcon from "@mui/icons-material/Groups";
+import SettingsIcon from "@mui/icons-material/Settings";
 const drawerWidth = 240;
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
@@ -45,9 +47,26 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-export default function Navbar({ pages, settings, children }) {
+
+export default function Navbar({ children, pages, settings }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [tournamentId, setTournamentId] = React.useState(null);
+
+  const menuItems = [
+    {
+      text: "Этапы соревнования",
+      icon: <EmojiEventsIcon />,
+      path: `/stages/${tournamentId}`,
+    },
+    { text: "Игроки", icon: <PersonIcon />, path: `/players/${tournamentId}` },
+    { text: "Команды", icon: <GroupsIcon />, path: `/teams/${tournamentId}` },
+    {
+      text: "Настройка Соревнований",
+      icon: <SettingsIcon />,
+      path: `/settings/${tournamentId}`,
+    },
+  ];
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -61,10 +80,10 @@ export default function Navbar({ pages, settings, children }) {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <Header
-        pages={pages}
-        settings={settings}
         open={open}
         handleDrawerOpen={handleDrawerOpen}
+        pages={pages}
+        settings={settings}
       />
       <Drawer
         sx={{
@@ -86,26 +105,11 @@ export default function Navbar({ pages, settings, children }) {
         </DrawerHeader>
         <Divider />
         <List>
-          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
+          {menuItems.map((item) => (
+            <ListItem key={item.text} disablePadding>
+              <ListItemButton component={Link} to={item.path}>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
               </ListItemButton>
             </ListItem>
           ))}

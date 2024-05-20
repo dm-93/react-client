@@ -8,6 +8,7 @@ import {
   Card,
   CardMedia,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const TournamentBadge = ({ tournament }) => {
   return (
@@ -28,7 +29,7 @@ const TournamentBadge = ({ tournament }) => {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small" variant="contained" color="primary" fullWidth>
+          <Button component={Link} to={`/tournament/${tournament.id}`} size="small" variant="contained" color="primary" fullWidth>
             Открыть
           </Button>
         </CardActions>

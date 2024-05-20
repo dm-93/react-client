@@ -3,6 +3,7 @@ import { Tournaments } from "./pages/tournaments/Tournaments";
 import Navbar from "./navbar/Navbar";
 import Teams from "./pages/teams/Teams";
 import Other from "./pages/other/Other";
+import Tournament from "./pages/tournaments/Tournament";
 
 const pages = [
   { name: "Команды", path: "/teams", component: Teams },
@@ -24,7 +25,8 @@ function App() {
                 element={<page.component />}
               />
             ))}
-            {/* <Route path="/" element={<Tournaments/>} /> */}
+            <Route exact path="/" element={<Tournaments/>} />
+            <Route path="/tournament/:id" element={<Tournament/>} />
           </Routes>
         </Navbar>
       </Router>
