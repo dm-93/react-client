@@ -12,23 +12,23 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
 import http from "../../api/http";
 import CreateTeamDialog from "./CreateTeamDialog";
-
-const defaultFormObj = {
-  description: {
-    name: "",
-    schoolNr: 0,
-  },
-};
+import TournamentsContext from "../../context/TournamentsContext";
 
 export const Teams = () => {
+  const { tournamentId } = useContext(TournamentsContext);
   const [teams, setTeams] = useState([]);
   const [openModal, setOpen] = useState(false);
+  const defaultFormObj = {
+    tournamentId: tournamentId,
+    description: {
+      name: "",
+      schoolNr: 0,
+    },
+  };
   const [formData, setFormData] = useState(defaultFormObj);
-  const { tournamentId } = useParams();
 
   useEffect(() => {
     const getTeams = async () => {
@@ -56,10 +56,13 @@ export const Teams = () => {
 
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
-    console.log(e.target.name);
+    const [parent, child] = name.split(".");
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [parent]: {
+        ...prev[parent],
+        [child]: type === "checkbox" ? checked : value,
+      },
     }));
   };
 
@@ -84,9 +87,9 @@ export const Teams = () => {
         alignItems="center"
         width="100%"
       >
-        <Typography variant="h2">Соревнования</Typography>
+        <Typography variant="h2">Команды</Typography>
         <Button variant="contained" onClick={handleClickOpen}>
-          Создать соревнование
+          Создать Команду
         </Button>
       </Box>
       <Box

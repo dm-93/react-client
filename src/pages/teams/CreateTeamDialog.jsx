@@ -21,22 +21,21 @@ const CreateTeamDialog = ({ handleSave, handleClose, handleChange, open, formDat
           autoFocus
           required
           autoComplete="off"
-          name="name"
+          name="description.name"
           margin="dense"
           label="Название"
           type="text"
           fullWidth
           variant="outlined"
-          value={formData.name}
+          value={formData.description.name}
           onChange={handleChange}
         />
         <TextField
-          autoFocus
           autoComplete="off"
-          name="name"
+          name="description.schoolNr"
           margin="dense"
           label="Номер школы"
-          type="text"
+          type="number"
           fullWidth
           variant="outlined"
           value={formData.description.schoolNr}

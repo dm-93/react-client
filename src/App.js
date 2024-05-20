@@ -4,9 +4,10 @@ import Navbar from "./navbar/Navbar";
 import Teams from "./pages/teams/Teams";
 import Other from "./pages/other/Other";
 import Tournament from "./pages/tournaments/Tournament";
+import { TournamentsProvider } from "./context/TournamentsContext";
 
 const pages = [
-  { name: "Команды", path: "/teams", component: Teams },
+  { name: "Команды", path: "/teams/:tournamentId", component: Teams },
   { name: "Соревнования", path: "/tournaments", component: Tournaments },
   { name: "Другое", path: "/other", component: Other },
 ];
@@ -16,19 +17,21 @@ function App() {
   return (
     <>
       <Router>
-        <Navbar pages={pages} settings={settings}>
-          <Routes>
-            {pages.map((page) => (
-              <Route
-                key={page.name}
-                path={page.path}
-                element={<page.component />}
-              />
-            ))}
-            <Route exact path="/" element={<Tournaments/>} />
-            <Route path="/tournament/:id" element={<Tournament/>} />
-          </Routes>
-        </Navbar>
+        <TournamentsProvider>
+          <Navbar pages={pages} settings={settings}>
+            <Routes>
+              {pages.map((page) => (
+                <Route
+                  key={page.name}
+                  path={page.path}
+                  element={<page.component />}
+                />
+              ))}
+              <Route exact path="/" element={<Tournaments />} />
+              <Route path="/tournament/:id" element={<Tournament />} />
+            </Routes>
+          </Navbar>
+        </TournamentsProvider>
       </Router>
     </>
   );

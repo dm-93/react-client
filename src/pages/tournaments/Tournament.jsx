@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, TextField, Button, Box } from "@mui/material";
 import http from "../../api/http";
+import TournamentsContext from "../../context/TournamentsContext";
 
 const Tournament = () => {
+  const { setTournamentId } = useContext(TournamentsContext);
   const [tournament, setTournament] = useState({});
   const { id } = useParams();
 
@@ -16,6 +18,7 @@ const Tournament = () => {
 
         if (response.status === 200) {
           setTournament(response.data[0]);
+          setTournamentId(response.data[0].id)
         }
       } catch (error) {
         console.log(error);
@@ -40,7 +43,7 @@ const Tournament = () => {
           required
           label="Название"
           name="name"
-          value={tournament.name || ''}
+          value={tournament.name || ""}
           onChange={handleChange}
           margin="normal"
         />
@@ -49,7 +52,7 @@ const Tournament = () => {
             label="Дата начала соревнований"
             type="datetime-local"
             name="startDate"
-            value={tournament.startDate || ''}
+            value={tournament.startDate || ""}
             onChange={handleChange}
             InputLabelProps={{ shrink: true }}
             fullWidth
@@ -58,7 +61,7 @@ const Tournament = () => {
             label="Дата окончания соревнований"
             type="datetime-local"
             name="endDate"
-            value={tournament.endDate || ''}
+            value={tournament.endDate || ""}
             onChange={handleChange}
             InputLabelProps={{ shrink: true }}
             fullWidth

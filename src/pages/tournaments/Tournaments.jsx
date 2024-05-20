@@ -1,8 +1,9 @@
 import { Box, Button, Typography, Grid } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import http from "../../api/http";
 import CreateTournamentDialog from "./CreateTournamentDialog";
 import TournamentBadge from "./TournamentBadge";
+import TournamentsContext from "../../context/TournamentsContext";
 
 const defaultForObj = {
   name: "",
@@ -11,24 +12,9 @@ const defaultForObj = {
 };
 
 export const Tournaments = () => {
-  const [tournaments, setTournaments] = useState([]);
+  const { tournaments, setTournaments } = useContext(TournamentsContext);
   const [openModal, setOpen] = useState(false);
   const [formData, setFormData] = useState(defaultForObj);
-
-  useEffect(() => {
-    const getTournaments = async () => {
-      try {
-        const response = await http.get("/api/tournament");
-
-        if (response.status === 200) {
-          setTournaments(response.data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getTournaments();
-  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -40,7 +26,6 @@ export const Tournaments = () => {
 
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
-    console.log(e.target.name);
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -96,7 +81,7 @@ export const Tournaments = () => {
             </Box>
           ) : (
             tournaments.map((tournament) => (
-              <TournamentBadge tournament={tournament} />
+              <TournamentBadge key={tournament.id} tournament={tournament} />
             ))
           )}
         </Grid>
