@@ -7,27 +7,48 @@ import {
   DialogTitle,
   TextField,
   Button,
+  Box,
 } from "@mui/material";
 
-const CreateTeamDialog = ({ handleSave, handleClose, handleChange, open, formData }) => {
+const TeamDialog = ({
+  handleSave,
+  handleClose,
+  handleChange,
+  isEditing,
+  open,
+  formData,
+}) => {
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Создать команду</DialogTitle>
+      <DialogTitle>{isEditing ? "Изменить команду" : "Создать команду"}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Пожалуйста заполните поля для создания новой команды.
+          Пожалуйста заполните поля для {isEditing ? "изменения" : "создания"} команды.
         </DialogContentText>
         <TextField
           autoFocus
           required
           autoComplete="off"
-          name="description.name"
+          name="name"
           margin="dense"
           label="Название"
           type="text"
           fullWidth
           variant="outlined"
-          value={formData.description.name}
+          value={formData.name}
+          onChange={handleChange}
+        />
+         <TextField
+          autoComplete="off"
+          name="description.description"
+          margin="dense"
+          label="Описание"
+          type="text"
+          fullWidth
+          variant="outlined"
+          multiline
+          rows={4}
+          value={formData.description.description}
           onChange={handleChange}
         />
         <TextField
@@ -47,11 +68,11 @@ const CreateTeamDialog = ({ handleSave, handleClose, handleChange, open, formDat
           Закрыть
         </Button>
         <Button onClick={handleSave} color="primary" variant="contained">
-          Создать
+          {isEditing ? "Изменить" : "Создать"}
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default CreateTeamDialog;
+export default TeamDialog;

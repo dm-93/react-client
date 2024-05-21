@@ -59,7 +59,7 @@ export default function Navbar({ children, pages, settings }) {
       path: `/stages/${tournamentId}`,
     },
     { text: "Игроки", icon: <PersonIcon />, path: `/players/${tournamentId}` },
-    { text: "Команды", icon: <GroupsIcon />, path: `/teams/${tournamentId}` },
+    { text: "Команды", icon: <GroupsIcon />, path: `/teams` },
     {
       text: "Настройка Соревнований",
       icon: <SettingsIcon />,

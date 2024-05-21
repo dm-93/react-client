@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState, useContext } from "react";
 import http from "../../api/http";
-import CreateTeamDialog from "./CreateTeamDialog";
+import TeamDialog from "./TeamDialog";
 import TournamentsContext from "../../context/TournamentsContext";
 
 export const Teams = () => {
@@ -22,13 +22,16 @@ export const Teams = () => {
   const [teams, setTeams] = useState([]);
   const [openModal, setOpen] = useState(false);
   const defaultFormObj = {
+    teamId: 0,
     tournamentId: tournamentId,
+    name: "",
     description: {
-      name: "",
+      description: "",
       schoolNr: 0,
     },
   };
   const [formData, setFormData] = useState(defaultFormObj);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const getTeams = async () => {
@@ -47,6 +50,8 @@ export const Teams = () => {
   }, [tournamentId]);
 
   const handleClickOpen = () => {
+    setIsEditing(false);
+    setFormData(defaultFormObj);
     setOpen(true);
   };
 
@@ -57,22 +62,68 @@ export const Teams = () => {
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
     const [parent, child] = name.split(".");
-    setFormData((prev) => ({
-      ...prev,
-      [parent]: {
-        ...prev[parent],
-        [child]: type === "checkbox" ? checked : value,
-      },
-    }));
+    setFormData((prev) => {
+      if (parent === "description") {
+        return {
+          ...prev,
+          description: {
+            ...prev.description,
+            [child]: type === "checkbox" ? checked : value,
+          },
+        };
+      }
+
+      return {
+        ...prev,
+        [parent]: type === "checkbox" ? checked : value,
+      };
+    });
   };
 
   const handleSave = async () => {
+    if (isEditing) {
+      handleUpdate();
+    } else {
+      try {
+        const response = await http.post("/api/teams", formData);
+        if (response.status === 201) {
+          setTeams((prev) => [...prev, response.data]);
+          handleClose();
+          setFormData(defaultFormObj);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const handleEdit = (team) => {
+    setFormData(team);
+    setIsEditing(true);
+    setOpen(true);
+  };
+
+  const handleUpdate = async () => {
     try {
-      const response = await http.post("/api/teams", formData);
-      if (response.status === 201) {
-        setTeams((prev) => [...prev, response.data]);
+      const response = await http.put(`/api/teams`, formData);
+      if (response.status === 200) {
+        setTeams((prev) =>
+          prev.map((team) => (team.id === formData.teamId ? response.data : team))
+        );
         handleClose();
         setFormData(defaultFormObj);
+        setIsEditing(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDelete = async (teamId) => {
+    try {
+      const response = await http.delete(`/api/teams?teamId=${teamId}`);
+      if (response.status === 200) {
+        setTeams((prev) => prev.filter((team) => team.id !== teamId));
       }
     } catch (error) {
       console.error(error);
@@ -119,15 +170,33 @@ export const Teams = () => {
                     <TableRow>
                       <TableCell>Название</TableCell>
                       <TableCell>Номер школы</TableCell>
-                      <TableCell>Дата добавления</TableCell>
+                      <TableCell>Дата создания</TableCell>
+                      <TableCell>Действия</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {teams.map((team) => (
                       <TableRow key={team.id}>
-                        <TableCell>{team.description.name}</TableCell>
+                        <TableCell>{team.name}</TableCell>
                         <TableCell>{team.description.schoolNr}</TableCell>
                         <TableCell>{team.createdOn}</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleEdit(team)}
+                          >
+                            Изменить
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={() => handleDelete(team.id)}
+                            style={{ marginLeft: 8 }}
+                          >
+                            Удалить
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -137,10 +206,11 @@ export const Teams = () => {
           )}
         </Grid>
       </Box>
-      <CreateTeamDialog
+      <TeamDialog
         handleSave={handleSave}
         handleClose={handleClose}
         handleChange={handleChange}
+        isEditing={isEditing}
         open={openModal}
         formData={formData}
       />
