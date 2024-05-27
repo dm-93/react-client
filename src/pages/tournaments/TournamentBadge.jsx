@@ -16,7 +16,7 @@ const TournamentBadge = ({ tournament }) => {
       <Card sx={{ maxWidth: 345 }} variant="outlined">
         <CardMedia
           sx={{ height: 140 }}
-          image="/static/images/cards/contemplative-reptile.jpg"
+          image={tournament.tournamentPictureBase64 || "none"}
           title="Tournament picture"
         />
         <CardContent>
@@ -25,7 +25,7 @@ const TournamentBadge = ({ tournament }) => {
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Начало соревнований:{" "}
-            {new Date(tournament.createdOn).toLocaleDateString()}
+            {new Date(tournament.startDate).toLocaleDateString()}
           </Typography>
         </CardContent>
         <CardActions>
