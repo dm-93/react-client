@@ -7,6 +7,7 @@ import TournamentsContext from "../../context/TournamentsContext";
 const Tournament = () => {
   const { setTournamentId } = useContext(TournamentsContext);
   const [tournament, setTournament] = useState({});
+  const [imageDimensions, setImageDimensions] = useState({ width: 300, height: 300 });
   const { id } = useParams();
 
   useEffect(() => {
@@ -17,8 +18,9 @@ const Tournament = () => {
         );
 
         if (response.status === 200) {
-          setTournament(response.data[0]);
-          setTournamentId(response.data[0].id)
+          const tournamentData = response.data[0];
+          setTournamentId(tournamentData.id);
+          setTournament(tournamentData);
         }
       } catch (error) {
         console.log(error);
@@ -35,9 +37,43 @@ const Tournament = () => {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const image = new Image();
+      image.onload = () => {
+        setImageDimensions({ width: image.width, height: image.height });
+        setTournament((prev) => ({
+          ...prev,
+          TournamentPictureBase64: reader.result,
+        }));
+      };
+      image.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await http.put("/api/tournament", tournament, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 200) {
+        alert("Tournament updated successfully");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Container maxWidth="lg">
-      <form>
+      <form onSubmit={handleSubmit}>
         <TextField
           fullWidth
           required
@@ -74,14 +110,21 @@ const Tournament = () => {
           border="1px dashed gray"
           padding="16px"
           marginY="normal"
+          width={imageDimensions.width}
+          height={imageDimensions.height}
+          style={{
+            backgroundImage: tournament.tournamentPictureBase64 ? `url(${tournament.tournamentPictureBase64})` : 'none',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
         >
           <Button variant="contained" component="label">
             Загрузить картинку
-            <input type="file" hidden />
+            <input type="file" hidden onChange={handleFileChange} />
           </Button>
         </Box>
         <Box display="flex" justifyContent="space-between" marginY="normal">
-          <Button variant="contained" color="success">
+          <Button variant="contained" color="success" type="submit">
             Сохранить
           </Button>
           <Button variant="contained" color="error">

@@ -35,22 +35,28 @@ const CreateTournamentDialog = ({ handleSave, handleClose, handleChange, open, f
           name="startDate"
           margin="dense"
           label="Дата начала соревнования"
-          type="datetime-local"
+          type="date"
           fullWidth
           variant="outlined"
           value={formData.startDate}
           onChange={handleChange}
+          InputLabelProps={{
+            shrink: true,
+          }}
         />
         <TextField
           required
           name="endDate"
           margin="dense"
           label="Дата завершения соревнования"
-          type="datetime-local"
+          type="date"
           fullWidth
           variant="outlined"
           value={formData.endDate}
           onChange={handleChange}
+          InputLabelProps={{
+            shrink: true,
+          }}
         />
       </DialogContent>
       <DialogActions>

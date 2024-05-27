@@ -179,7 +179,7 @@ export const Teams = () => {
                       <TableRow key={team.id}>
                         <TableCell>{team.name}</TableCell>
                         <TableCell>{team.description.schoolNr}</TableCell>
-                        <TableCell>{team.createdOn}</TableCell>
+                        <TableCell>{new Date(team.createdOn).toLocaleDateString()}</TableCell>
                         <TableCell>
                           <Button
                             variant="contained"

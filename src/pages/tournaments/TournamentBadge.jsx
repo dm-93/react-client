@@ -25,7 +25,7 @@ const TournamentBadge = ({ tournament }) => {
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Начало соревнований:{" "}
-            {new Date(tournament.createdOn).toLocaleString()}
+            {new Date(tournament.createdOn).toLocaleDateString()}
           </Typography>
         </CardContent>
         <CardActions>
