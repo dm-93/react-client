@@ -1,5 +1,5 @@
 import { Box, Button, Typography, Grid } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState , useEffect} from "react";
 import http from "../../api/http";
 import CreateTournamentDialog from "./CreateTournamentDialog";
 import TournamentBadge from "./TournamentBadge";
@@ -15,6 +15,21 @@ export const Tournaments = () => {
   const { tournaments, setTournaments } = useContext(TournamentsContext);
   const [openModal, setOpen] = useState(false);
   const [formData, setFormData] = useState(defaultForObj);
+
+  useEffect(() => {
+    const getTournaments = async () => {
+      try {
+        const response = await http.get("/api/tournament");
+
+        if (response.status === 200) {
+          setTournaments(response.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getTournaments();
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -92,6 +107,7 @@ export const Tournaments = () => {
         handleChange={handleChange}
         open={openModal}
         formData={formData}
+        setFormData={setFormData}
       />
     </Box>
   );

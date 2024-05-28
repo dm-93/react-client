@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -18,6 +18,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SettingsIcon from "@mui/icons-material/Settings";
+import TournamentsContext from "../context/TournamentsContext";
 const drawerWidth = 240;
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
@@ -50,15 +51,14 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 export default function Navbar({ children, pages, settings }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [tournamentId, setTournamentId] = React.useState(null);
-
+  const { tournamentId } = useContext(TournamentsContext);
   const menuItems = [
     {
       text: "Этапы соревнования",
       icon: <EmojiEventsIcon />,
-      path: `/stages/${tournamentId}`,
+      path: `/stages`,
     },
-    { text: "Игроки", icon: <PersonIcon />, path: `/players/${tournamentId}` },
+    { text: "Игроки", icon: <PersonIcon />, path: `/players` },
     { text: "Команды", icon: <GroupsIcon />, path: `/teams` },
     {
       text: "Настройка Соревнований",
