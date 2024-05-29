@@ -2,6 +2,7 @@ import { Tournaments } from "../pages/tournaments/Tournaments";
 import Tournament from "../pages/tournaments/Tournament";
 import Teams from "../pages/teams/Teams";
 import Members from "../pages/players/Members";
+import Users from "../pages/admin/Users";
 
 export const nav = [
   {
@@ -21,6 +22,12 @@ export const nav = [
     path: "/players",
     name: "Участники",
     element: <Members />,
+    isPrivate: true,
+  },
+  {
+    path: "/users",
+    name: "Пользователи",
+    element: <Users />,
     isPrivate: true,
   },
 ];

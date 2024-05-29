@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Tournaments } from "./pages/tournaments/Tournaments";
 import { TournamentsProvider } from "./context/TournamentsContext";
@@ -15,6 +15,13 @@ const settings = ["Профиль", "Акаунт", "Статистика", "В�
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   return (
     <Router>
