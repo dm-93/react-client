@@ -14,7 +14,6 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Pagination,
 } from '@mui/material';
 import http from '../../api/http';
 import TournamentsContext from '../../context/TournamentsContext';
@@ -23,22 +22,31 @@ const Bracket = () => {
   const { tournamentId } = useContext(TournamentsContext);
   const [matchups, setMatchups] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingEntry, setEditingEntry] = useState(null);
-  const [editingWinner, setEditingWinner] = useState(null);
+  const [editingMatchup, setEditingMatchup] = useState(null);
   const [pendingChanges, setPendingChanges] = useState({});
   const [isEmpty, setIsEmpty] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10;
+  const [currentRound, setCurrentRound] = useState(1);
+  const [roundName, setRoundName] = useState('');
+  const [isFinal, setIsFinal] = useState(false);
 
-  const fetchData = async (page = 1) => {
+  const fetchData = async (round = 1) => {
     setLoading(true);
     try {
-      const response = await http.get(`/api/Matchups?parameter=${tournamentId}&page=${page}&itemsPerPage=${itemsPerPage}`);
-      console.log(response);
-      setMatchups(response.data.data);
-      setTotalPages(Math.ceil(response.data.totalCount / itemsPerPage));
-      setIsEmpty(response.data.data.length === 0);
+      const response = await http.post(`/api/Matchups/Get`, {
+        Page: 1,
+        ItemsPerPage: 10,
+        Parameter: { tournamentId, roundId: round }
+      });
+      const matchupsData = response.data.data;
+      setMatchups(matchupsData);
+      setIsEmpty(matchupsData.length === 0);
+      if (matchupsData.length === 1) {
+        setRoundName('Финал');
+        setIsFinal(true);
+      } else {
+        setRoundName(`Раунд: ${round}`);
+        setIsFinal(false);
+      }
     } catch (error) {
       console.error('Error fetching matchups', error);
     } finally {
@@ -47,26 +55,10 @@ const Bracket = () => {
   };
 
   useEffect(() => {
-    fetchData(currentPage);
-  }, [tournamentId, currentPage]);
-
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
-  };
+    fetchData(currentRound);
+  }, [tournamentId, currentRound]);
 
   const handleScoreChange = (matchupId, entryId, newScore) => {
-    setMatchups((prevMatchups) =>
-      prevMatchups.map((matchup) =>
-        matchup.id === matchupId
-          ? {
-              ...matchup,
-              entries: matchup.entries.map((entry) =>
-                entry.id === entryId ? { ...entry, score: newScore } : entry
-              ),
-            }
-          : matchup
-      )
-    );
     setPendingChanges((prev) => ({
       ...prev,
       [matchupId]: {
@@ -79,29 +71,37 @@ const Bracket = () => {
     }));
   };
 
-  const handleWinnerChange = (matchupId, newWinner) => {
-    setMatchups((prevMatchups) =>
-      prevMatchups.map((matchup) =>
-        matchup.id === matchupId ? { ...matchup, winner: newWinner } : matchup
-      )
-    );
+  const handleWinnerChange = (matchupId, newWinnerId) => {
+    console.log(newWinnerId);
     setPendingChanges((prev) => ({
       ...prev,
       [matchupId]: {
         ...prev[matchupId],
-        winner: newWinner,
+        winner: newWinnerId,
       },
     }));
   };
 
-  const saveAllChanges = async () => {
+  const saveChanges = async (matchupId) => {
     try {
-      await Promise.all(
-        Object.entries(pendingChanges).map(([matchupId, changes]) =>
-          http.put(`/api/Matchups/${matchupId}`, changes)
-        )
-      );
-      setPendingChanges({});
+      const changes = pendingChanges[matchupId];
+      console.log(changes);
+      const matchupToSave = matchups.find((matchup) => matchup.id === matchupId);
+      const payload = {
+        ...matchupToSave,
+        winner: changes.winner || matchupToSave.winner,
+        entries: matchupToSave.entries.map((entry) => ({
+          ...entry,
+          score: changes.entries?.[entry.id] !== undefined ? changes.entries[entry.id] : entry.score,
+        })),
+      };
+      await http.put(`/api/Matchups`, payload);
+      setPendingChanges((prev) => {
+        const { [matchupId]: _, ...rest } = prev;
+        return rest;
+      });
+      setEditingMatchup(null);
+      fetchData(currentRound); 
     } catch (error) {
       console.error('Error saving changes', error);
     }
@@ -110,10 +110,38 @@ const Bracket = () => {
   const createBracket = async () => {
     try {
       await http.post(`/api/Matchups?tournamentId=${tournamentId}`);
-      fetchData(currentPage);
+      fetchData(currentRound);
       setIsEmpty(false);
     } catch (error) {
       console.error("Error creating bracket", error);
+    }
+  };
+
+  const allWinnersSelected = () => {
+    return matchups.every(matchup => matchup.winner);
+  };
+
+  const goToNextRound = async () => {
+    try {
+      const response = await http.post(`/api/Matchups/nextRound`, {
+        tournamentId,
+        roundId: currentRound
+      });
+      if (response.data) {
+        setCurrentRound(currentRound + 1);
+        fetchData(currentRound + 1);
+      }
+    } catch (error) {
+      console.error('Error going to next round', error);
+    }
+  };
+
+  const finishTournament = async () => {
+    try {
+      await http.patch(`/api/Tournament/${tournamentId}/complete`);
+      alert('Турнир завершен!');
+    } catch (error) {
+      console.error('Error finishing tournament', error);
     }
   };
 
@@ -138,79 +166,85 @@ const Bracket = () => {
 
   return (
     <Container>
+      <Typography variant="h4">{roundName}</Typography>
       {matchups.map((matchup) => (
         <Paper key={matchup.id} elevation={3} sx={{ mb: 2, p: 2 }}>
-          <Typography variant="h6">Round: {matchup.matchupRound}</Typography>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>Winner</InputLabel>
-            <Select
-              value={editingWinner?.id === matchup.id ? editingWinner.winner.id : matchup.winner?.id || ''}
-              onChange={(e) =>
-                setEditingWinner({
-                  id: matchup.id,
-                  winner: matchup.entries.find((entry) => entry.teamCompeting?.id === e.target?.value).teamCompeting,
-                })
-              }
-            >
-              {matchup.entries.map((entry) => (
-                <MenuItem key={entry.teamCompeting?.id} value={entry.teamCompeting?.id}>
-                  {entry.teamCompeting?.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <List>
-            {matchup.entries.map((entry) => (
-              <ListItem key={entry.id}>
-                <ListItemText
-                  primary={entry.teamCompeting?.name}
-                  secondary={
-                    editingEntry?.id === entry.id ? (
-                      <TextField
-                        type="number"
-                        value={editingEntry.score}
-                        onChange={(e) =>
-                          setEditingEntry({ ...editingEntry, score: parseFloat(e.target.value) })
-                        }
-                      />
-                    ) : (
-                      `Score: ${entry.score}`
-                    )
-                  }
-                />
-                {editingEntry?.id === entry.id ? (
-                  <Button
-                    onClick={() => {
-                      handleScoreChange(matchup.id, entry.id, editingEntry.score);
-                      setEditingEntry(null);
-                    }}
-                  >
-                    Save
-                  </Button>
-                ) : (
-                  <Button onClick={() => setEditingEntry({ id: entry.id, score: entry.score })}>
-                    Edit
-                  </Button>
-                )}
-              </ListItem>
-            ))}
-          </List>
-          {editingWinner?.id === matchup.id && (
-            <Button
-              onClick={() => {
-                handleWinnerChange(matchup.id, editingWinner.winner);
-                setEditingWinner(null);
-              }}
-            >
-              Save Winner
-            </Button>
+          {editingMatchup === matchup.id ? (
+            <>
+              <FormControl fullWidth sx={{ mb: 2 }}>
+                <InputLabel>Победитель</InputLabel>
+                <Select
+                  value={pendingChanges[matchup.id]?.winner || matchup.winner?.id || ''}
+                  onChange={(e) => handleWinnerChange(matchup.id, e.target.value)}
+                >
+                  {matchup.entries.map((entry) => (
+                    <MenuItem key={entry.id} value={entry.teamCompeting?.id}>
+                      {entry.teamCompeting?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <List>
+                {matchup.entries.map((entry) => (
+                  <ListItem key={entry.id}>
+                    <ListItemText
+                      primary={entry.teamCompeting?.name}
+                      secondary={
+                        <TextField
+                          type="number"
+                          value={pendingChanges[matchup.id]?.entries?.[entry.id] !== undefined ? pendingChanges[matchup.id].entries[entry.id] : entry.score}
+                          onChange={(e) => handleScoreChange(matchup.id, entry.id, parseFloat(e.target.value))}
+                        />
+                      }
+                    />
+                  </ListItem>
+                ))}
+              </List>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => saveChanges(matchup.id)}
+              >
+                Сохранить
+              </Button>
+            </>
+          ) : (
+            <>
+              <List>
+                {matchup.entries.map((entry) => (
+                  <ListItem key={entry.id}>
+                    <ListItemText
+                      primary={entry.teamCompeting?.name}
+                      secondary={`Score: ${entry.score}`}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+              <Typography variant="body1">Победитель: {matchup.winner?.name || 'Не выбран'}</Typography>
+              <Button onClick={() => setEditingMatchup(matchup.id)}>Редактировать</Button>
+            </>
           )}
         </Paper>
       ))}
-      <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} sx={{ mt: 3 }} />
-      <Button variant="contained" color="primary" onClick={saveAllChanges} sx={{ mt: 3 }}>
-        Save All Changes
-      </Button>
+      {isFinal ? (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={finishTournament}
+          disabled={!allWinnersSelected()}
+        >
+          Завершить Соревнование
+        </Button>
+      ) : (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={goToNextRound}
+          disabled={!allWinnersSelected()}
+        >
+          Следующий этап
+        </Button>
+      )}
     </Container>
   );
 };

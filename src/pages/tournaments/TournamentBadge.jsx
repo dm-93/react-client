@@ -27,6 +27,11 @@ const TournamentBadge = ({ tournament }) => {
             Начало соревнований:{" "}
             {new Date(tournament.startDate).toLocaleDateString()}
           </Typography>
+          {tournament.completed && (
+            <Typography variant="body2" color="error">
+              Соревнование завершено
+            </Typography>
+          )}
         </CardContent>
         <CardActions>
           <Button component={Link} to={`/tournament/${tournament.id}`} size="small" variant="contained" color="primary" fullWidth>

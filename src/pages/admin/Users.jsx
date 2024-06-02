@@ -79,10 +79,10 @@ const Users = () => {
       <Table aria-label="users table">
         <TableHead>
           <TableRow>
-            <TableCell>User ID</TableCell>
-            <TableCell>User Name</TableCell>
-            <TableCell>Roles</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell>№</TableCell>
+            <TableCell>Имя</TableCell>
+            <TableCell>Роль</TableCell>
+            <TableCell>Действия</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -129,30 +129,30 @@ const Users = () => {
 
       {editUser && (
         <Dialog open={Boolean(editUser)} onClose={() => setEditUser(null)}>
-          <DialogTitle>Edit Roles</DialogTitle>
+          <DialogTitle>Редактировать роль</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Add a new role for {editUser.userName}
+              Добавить новую роль для {editUser.userName}
             </DialogContentText>
             <FormControl fullWidth margin="dense">
-              <InputLabel id="role-select-label">New Role</InputLabel>
+              <InputLabel id="role-select-label">Новая роль</InputLabel>
               <Select
                 labelId="role-select-label"
                 value={newRole}
                 onChange={(e) => setNewRole(e.target.value)}
                 label="New Role"
               >
-                <MenuItem value="Admin">Admin</MenuItem>
-                <MenuItem value="User">User</MenuItem>
+                <MenuItem value="Admin">Администратор</MenuItem>
+                <MenuItem value="User">Пользователь</MenuItem>
               </Select>
             </FormControl>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setEditUser(null)} color="primary">
-              Cancel
+              Закрыть
             </Button>
             <Button onClick={handleAddRole} color="primary">
-              Add Role
+              Добавить роль
             </Button>
           </DialogActions>
         </Dialog>

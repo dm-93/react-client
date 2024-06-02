@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Container, TextField, Button, Box } from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
+import { Container, TextField, Button, Box, Typography } from "@mui/material";
 import http from "../../api/http";
 import TournamentsContext from "../../context/TournamentsContext";
 
@@ -9,6 +9,7 @@ const Tournament = () => {
   const [tournament, setTournament] = useState({});
   const [imageDimensions, setImageDimensions] = useState({ width: 300, height: 300 });
   const { id } = useParams();
+  const navigate = useNavigate(); // Use useNavigate instead of useHistory
 
   useEffect(() => {
     const getTournamentInfo = async () => {
@@ -27,7 +28,7 @@ const Tournament = () => {
       }
     };
     getTournamentInfo();
-  }, [id]);
+  }, [id, setTournamentId]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -71,8 +72,25 @@ const Tournament = () => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const response = await http.delete(`/api/tournament?tournamentId=${id}`);
+      if (response.status === 204) { // Use 204 No Content status for deletion success
+        alert("Tournament deleted successfully");
+        navigate("/tournaments"); // Navigate back to tournaments list
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Container maxWidth="lg">
+      {tournament.completed && (
+        <Typography variant="h6" color="error" gutterBottom>
+          Соревнование завершено
+        </Typography>
+      )}
       <form onSubmit={handleSubmit}>
         <TextField
           fullWidth
@@ -127,7 +145,7 @@ const Tournament = () => {
           <Button variant="contained" color="success" type="submit">
             Сохранить
           </Button>
-          <Button variant="contained" color="error">
+          <Button variant="contained" color="error" onClick={handleDelete}>
             Удалить
           </Button>
         </Box>

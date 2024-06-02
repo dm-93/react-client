@@ -1,5 +1,5 @@
 import { Box, Button, Typography, Grid } from "@mui/material";
-import React, { useContext, useState , useEffect} from "react";
+import React, { useContext, useState, useEffect } from "react";
 import http from "../../api/http";
 import CreateTournamentDialog from "./CreateTournamentDialog";
 import TournamentBadge from "./TournamentBadge";
@@ -29,7 +29,7 @@ export const Tournaments = () => {
       }
     };
     getTournaments();
-  }, []);
+  }, [setTournaments]);
 
   const handleClickOpen = () => {
     setOpen(true);
