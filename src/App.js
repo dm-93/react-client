@@ -8,8 +8,6 @@ import Registration from "./authentication/Registration";
 import Login from "./authentication/Login";
 import AuthSelection from "./authentication/AuthSelection";
 
-const settings = ["Профиль", "Акаунт", "Статистика", "Выйти"];
-
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -55,7 +53,7 @@ function App() {
     <Router>
       <TournamentsProvider>
         {isAuthenticated ? (
-          <Navbar settings={settings}>
+          <Navbar>
             {authenticatedRoutes}
           </Navbar>
         ) : (

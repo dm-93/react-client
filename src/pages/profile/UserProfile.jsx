@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { TextField, Button, MenuItem, Box, Typography, Grid, Container } from '@mui/material';
 
 const ProfileSchema = Yup.object().shape({
   firstName: Yup.string().required('Required'),
@@ -23,129 +24,229 @@ const ProfileSchema = Yup.object().shape({
 
 const UserProfile = () => {
   return (
-    <div>
-      <h1>Edit Profile</h1>
-      <Formik
-        initialValues={{
-          firstName: '',
-          lastName: '',
-          age: '',
-          weight: '',
-          gender: '',
-          phone: '',
-          email: '',
-          userPicture: '',
-          address: {
-            country: '',
-            city: '',
-            street: '',
-            postalCode: '',
-            houseNr: '',
-            appartmentNr: '',
-          },
-        }}
-        validationSchema={ProfileSchema}
-        onSubmit={values => {
-          console.log(values);
-        }}
-      >
-        {({ isSubmitting }) => (
-          <Form>
-            <div>
-              <label htmlFor="firstName">First Name</label>
-              <Field type="text" name="firstName" />
-              <ErrorMessage name="firstName" component="div" />
-            </div>
-
-            <div>
-              <label htmlFor="lastName">Last Name</label>
-              <Field type="text" name="lastName" />
-              <ErrorMessage name="lastName" component="div" />
-            </div>
-
-            <div>
-              <label htmlFor="age">Age</label>
-              <Field type="number" name="age" />
-              <ErrorMessage name="age" component="div" />
-            </div>
-
-            <div>
-              <label htmlFor="weight">Weight</label>
-              <Field type="number" name="weight" />
-              <ErrorMessage name="weight" component="div" />
-            </div>
-
-            <div>
-              <label htmlFor="gender">Gender</label>
-              <Field as="select" name="gender">
-                <option value="">Select</option>
-                <option value="true">Male</option>
-                <option value="false">Female</option>
-              </Field>
-              <ErrorMessage name="gender" component="div" />
-            </div>
-
-            <div>
-              <label htmlFor="phone">Phone</label>
-              <Field type="text" name="phone" />
-              <ErrorMessage name="phone" component="div" />
-            </div>
-
-            <div>
-              <label htmlFor="email">Email</label>
-              <Field type="email" name="email" />
-              <ErrorMessage name="email" component="div" />
-            </div>
-
-            <div>
-              <label htmlFor="userPicture">User Picture URL</label>
-              <Field type="text" name="userPicture" />
-              <ErrorMessage name="userPicture" component="div" />
-            </div>
-
-            <div>
-              <label htmlFor="address.country">Country</label>
-              <Field type="text" name="address.country" />
-              <ErrorMessage name="address.country" component="div" />
-            </div>
-
-            <div>
-              <label htmlFor="address.city">City</label>
-              <Field type="text" name="address.city" />
-              <ErrorMessage name="address.city" component="div" />
-            </div>
-
-            <div>
-              <label htmlFor="address.street">Street</label>
-              <Field type="text" name="address.street" />
-              <ErrorMessage name="address.street" component="div" />
-            </div>
-
-            <div>
-              <label htmlFor="address.postalCode">Postal Code</label>
-              <Field type="text" name="address.postalCode" />
-              <ErrorMessage name="address.postalCode" component="div" />
-            </div>
-
-            <div>
-              <label htmlFor="address.houseNr">House Number</label>
-              <Field type="text" name="address.houseNr" />
-              <ErrorMessage name="address.houseNr" component="div" />
-            </div>
-
-            <div>
-              <label htmlFor="address.appartmentNr">Apartment Number</label>
-              <Field type="text" name="address.appartmentNr" />
-              <ErrorMessage name="address.appartmentNr" component="div" />
-            </div>
-
-            <button type="submit" disabled={isSubmitting}>
-              Submit
-            </button>
-          </Form>
-        )}
-      </Formik>
-    </div>
+    <Container component="main" maxWidth="md">
+      <Box sx={{ mt: 8 }}>
+        <Typography component="h1" variant="h5">
+          Edit Profile
+        </Typography>
+        <Formik
+          initialValues={{
+            firstName: '',
+            lastName: '',
+            age: '',
+            weight: '',
+            gender: '',
+            phone: '',
+            email: '',
+            userPicture: '',
+            address: {
+              country: '',
+              city: '',
+              street: '',
+              postalCode: '',
+              houseNr: '',
+              appartmentNr: '',
+            },
+          }}
+          validationSchema={ProfileSchema}
+          onSubmit={values => {
+            console.log(values);
+          }}
+        >
+          {({ isSubmitting, handleChange, handleBlur, values }) => (
+            <Form>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="First Name"
+                    name="firstName"
+                    value={values.firstName}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="firstName" />}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="Last Name"
+                    name="lastName"
+                    value={values.lastName}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="lastName" />}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="Age"
+                    name="age"
+                    type="number"
+                    value={values.age}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="age" />}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="Weight"
+                    name="weight"
+                    type="number"
+                    value={values.weight}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="weight" />}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    select
+                    fullWidth
+                    variant="outlined"
+                    label="Gender"
+                    name="gender"
+                    value={values.gender}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="gender" />}
+                  >
+                    <MenuItem value={true}>Male</MenuItem>
+                    <MenuItem value={false}>Female</MenuItem>
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="Phone"
+                    name="phone"
+                    value={values.phone}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="phone" />}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="Email"
+                    name="email"
+                    value={values.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="email" />}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="User Picture URL"
+                    name="userPicture"
+                    value={values.userPicture}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="userPicture" />}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="Country"
+                    name="address.country"
+                    value={values.address.country}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="address.country" />}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="City"
+                    name="address.city"
+                    value={values.address.city}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="address.city" />}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="Street"
+                    name="address.street"
+                    value={values.address.street}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="address.street" />}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="Postal Code"
+                    name="address.postalCode"
+                    value={values.address.postalCode}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="address.postalCode" />}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="House Number"
+                    name="address.houseNr"
+                    value={values.address.houseNr}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="address.houseNr" />}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="Apartment Number"
+                    name="address.appartmentNr"
+                    value={values.address.appartmentNr}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    helperText={<ErrorMessage name="address.appartmentNr" />}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    disabled={isSubmitting}
+                  >
+                    Submit
+                  </Button>
+                </Grid>
+              </Grid>
+            </Form>
+          )}
+        </Formik>
+      </Box>
+    </Container>
   );
 };
 

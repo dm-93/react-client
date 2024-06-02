@@ -37,7 +37,13 @@ const pages = [
   { name: "Пользователи", path: "/users" },
 ];
 
-function Header({ settings, open, handleDrawerOpen }) {
+const settings = [
+  { name: "Профиль", path: "/userProfile" },
+  { name: "Статистика", path: "/statistics" },
+  { name: "Выйти", path: "/logout" },
+];
+
+function Header({ open, handleDrawerOpen }) {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleOpenUserMenu = (event) => {
@@ -98,8 +104,13 @@ function Header({ settings, open, handleDrawerOpen }) {
             onClose={handleCloseUserMenu}
           >
             {settings.map((setting) => (
-              <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                <Typography textAlign="center">{setting}</Typography>
+              <MenuItem
+                key={setting.name}
+                component={Link}
+                to={setting.path}
+                onClick={handleCloseUserMenu}
+              >
+                <Typography textAlign="center">{setting.name}</Typography>
               </MenuItem>
             ))}
           </Menu>
@@ -108,4 +119,5 @@ function Header({ settings, open, handleDrawerOpen }) {
     </AppBar>
   );
 }
+
 export default Header;

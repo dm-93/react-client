@@ -51,7 +51,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-export default function Navbar({ children, settings }) {
+export default function Navbar({ children }) {
   const theme = useTheme();
   const location = useLocation();
   const { tournamentId, isDrawerOpen, setIsDrawerOpen } = useContext(TournamentsContext);
@@ -88,7 +88,6 @@ export default function Navbar({ children, settings }) {
       <Header
         open={isDrawerOpen}
         handleDrawerOpen={handleDrawerOpen}
-        settings={settings}
       />
       <Drawer
         sx={{

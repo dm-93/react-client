@@ -7,6 +7,7 @@ import Bracket from "../pages/brackets/Bracket";
 import Registration from "../authentication/Registration";
 import Login from "../authentication/Login";
 import AuthSelection from "../authentication/AuthSelection";
+import UserProfile from "../pages/profile/UserProfile";
 
 export const routes = [
   { path: "/register", name: "Регистрация", element: <Registration />, isPrivate: false },
@@ -18,4 +19,5 @@ export const routes = [
   { path: "/players", name: "Участники", element: <Members />, isPrivate: true },
   { path: "/users", name: "Пользователи", element: <Users />, isPrivate: true },
   { path: "/bracket", name: "Турнирная таблица", element: <Bracket />, isPrivate: true },
+  { path: "/userProfile", name: "Профиль", element: <UserProfile />, isPrivate: true },
 ];
