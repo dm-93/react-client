@@ -32,7 +32,12 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-function Header({ pages, settings, open, handleDrawerOpen }) {
+const pages = [
+  { name: "Соревнования", path: "/tournaments" },
+  { name: "Пользователи", path: "/users" },
+];
+
+function Header({ settings, open, handleDrawerOpen }) {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleOpenUserMenu = (event) => {

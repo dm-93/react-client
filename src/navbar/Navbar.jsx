@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -31,7 +31,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
       duration: theme.transitions.duration.leavingScreen,
     }),
     marginLeft: `-${drawerWidth}px`,
-    height: `calc(100vh - 64px)`, // Assuming the header height is 64px, adjust if necessary
+    height: `calc(100vh - 64px)`,
     overflow: 'auto',
     ...(open && {
       transition: theme.transitions.create("margin", {
@@ -51,10 +51,10 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-export default function Navbar({ children, pages, settings }) {
+export default function Navbar({ children, settings }) {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-  const { tournamentId } = useContext(TournamentsContext);
+  const location = useLocation();
+  const { tournamentId, isDrawerOpen, setIsDrawerOpen } = useContext(TournamentsContext);
   const menuItems = [
     {
       text: "Этапы соревнования",
@@ -64,27 +64,30 @@ export default function Navbar({ children, pages, settings }) {
     { text: "Игроки", icon: <PersonIcon />, path: `/players` },
     { text: "Команды", icon: <GroupsIcon />, path: `/teams` },
     {
-      text: "Настройка Соревнований",
+      text: "Настройка соревнования",
       icon: <SettingsIcon />,
-      path: `/settings/${tournamentId}`,
+      path: `/tournament/${tournamentId}`,
     },
   ];
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    if (tournamentId !== null) {
+      setIsDrawerOpen(true);
+    } else {
+      alert("Пожалуйста, выберите соревнование.");
+    }
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    setIsDrawerOpen(false);
   };
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <Header
-        open={open}
+        open={isDrawerOpen}
         handleDrawerOpen={handleDrawerOpen}
-        pages={pages}
         settings={settings}
       />
       <Drawer
@@ -98,7 +101,7 @@ export default function Navbar({ children, pages, settings }) {
         }}
         variant="persistent"
         anchor="left"
-        open={open}
+        open={isDrawerOpen}
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
@@ -112,7 +115,11 @@ export default function Navbar({ children, pages, settings }) {
         <Divider />
         <List>
           {menuItems.map((item) => (
-            <ListItem key={item.text} disablePadding>
+            <ListItem 
+              key={item.text} 
+              disablePadding 
+              selected={location.pathname === item.path}
+            >
               <ListItemButton component={Link} to={item.path}>
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.text} />
@@ -121,7 +128,7 @@ export default function Navbar({ children, pages, settings }) {
           ))}
         </List>
       </Drawer>
-      <Main open={open}>
+      <Main open={isDrawerOpen}>
         <DrawerHeader />
         {children}
       </Main>

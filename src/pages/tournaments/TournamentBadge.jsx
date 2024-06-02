@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Button,
   Typography,
@@ -8,9 +8,18 @@ import {
   Card,
   CardMedia,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import TournamentsContext from "../../context/TournamentsContext";
 
 const TournamentBadge = ({ tournament }) => {
+  const { selectTournament } = useContext(TournamentsContext);
+  const navigate = useNavigate();
+
+  const handleOpenTournament = () => {
+    selectTournament(tournament.id);
+    navigate(`/tournament/${tournament.id}`);
+  };
+
   return (
     <Grid item xs={12} sm={6} md={4} key={tournament.id}>
       <Card sx={{ maxWidth: 345 }} variant="outlined">
@@ -34,7 +43,7 @@ const TournamentBadge = ({ tournament }) => {
           )}
         </CardContent>
         <CardActions>
-          <Button component={Link} to={`/tournament/${tournament.id}`} size="small" variant="contained" color="primary" fullWidth>
+          <Button onClick={handleOpenTournament} size="small" variant="contained" color="primary" fullWidth>
             Открыть
           </Button>
         </CardActions>

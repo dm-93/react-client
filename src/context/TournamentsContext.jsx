@@ -1,19 +1,27 @@
-import React, { createContext, useState, useEffect } from "react";
-import http from "../api/http";
+import React, { createContext, useState } from "react";
 
-const TournamentsContext = createContext({});
+const TournamentsContext = createContext();
 
-export const TournamentsProvider = ({children}) => {
+export const TournamentsProvider = ({ children }) => {
+  const [tournamentId, setTournamentId] = useState(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [tournaments, setTournaments] = useState([]);
-  const [tournamentId, setTournamentId] = useState(0);
+
+  const selectTournament = (id) => {
+    setTournamentId(id);
+    setIsDrawerOpen(true);
+  };
 
   return (
     <TournamentsContext.Provider
       value={{
-        tournaments,
         tournamentId,
+        setTournamentId,
+        tournaments,
         setTournaments,
-        setTournamentId
+        selectTournament,
+        isDrawerOpen,
+        setIsDrawerOpen,
       }}
     >
       {children}
