@@ -19,6 +19,7 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SettingsIcon from "@mui/icons-material/Settings";
 import TournamentsContext from "../context/TournamentsContext";
+
 const drawerWidth = 240;
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
@@ -30,6 +31,8 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
       duration: theme.transitions.duration.leavingScreen,
     }),
     marginLeft: `-${drawerWidth}px`,
+    height: `calc(100vh - 64px)`, // Assuming the header height is 64px, adjust if necessary
+    overflow: 'auto',
     ...(open && {
       transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.easeOut,
@@ -56,7 +59,7 @@ export default function Navbar({ children, pages, settings }) {
     {
       text: "Этапы соревнования",
       icon: <EmojiEventsIcon />,
-      path: `/stages`,
+      path: `/bracket`,
     },
     { text: "Игроки", icon: <PersonIcon />, path: `/players` },
     { text: "Команды", icon: <GroupsIcon />, path: `/teams` },

@@ -7,9 +7,11 @@ import Navbar from "./navbar/Navbar";
 import Registration from "./authentication/Registration";
 import Login from "./authentication/Login";
 import AuthSelection from "./authentication/AuthSelection";
+import Users from "./pages/admin/Users";
 
 const pages = [
   { name: "Соревнования", path: "/tournaments", component: Tournaments },
+  { name: "Пользователи", path: "/users", component: Users },
 ];
 const settings = ["Профиль", "Акаунт", "Статистика", "Выйти"];
 
