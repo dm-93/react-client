@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { TextField, Button, Container, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import http from '../api/http';
+import TournamentsContext from '../context/TournamentsContext';
 
-const Login = ({ setIsAuthenticated }) => {
+const Login = () => {
+  const { setIsAuthenticated } = useContext(TournamentsContext);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -22,7 +24,6 @@ const Login = ({ setIsAuthenticated }) => {
         email: formData.email,
         password: formData.password,
       });
-      console.log(response.data);
       localStorage.setItem('accessToken', response.data.accessToken);
       localStorage.setItem('refreshToken', response.data.refreshToken);
       setIsAuthenticated(true);
@@ -37,13 +38,13 @@ const Login = ({ setIsAuthenticated }) => {
     <Container maxWidth="sm">
       <Box sx={{ mt: 5 }}>
         <Typography variant="h4" gutterBottom>
-          Login
+          Вход
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
             type="email"
-            label="Email"
+            label="Эл.Почта"
             name="email"
             value={formData.email}
             onChange={handleChange}
@@ -53,7 +54,7 @@ const Login = ({ setIsAuthenticated }) => {
           <TextField
             fullWidth
             type="password"
-            label="Password"
+            label="Пароль"
             name="password"
             value={formData.password}
             onChange={handleChange}
@@ -61,7 +62,7 @@ const Login = ({ setIsAuthenticated }) => {
             required
           />
           <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 3 }}>
-            Login
+            Вход
           </Button>
         </form>
       </Box>

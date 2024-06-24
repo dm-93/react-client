@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 const TournamentsContext = createContext();
 
@@ -6,6 +6,17 @@ export const TournamentsProvider = ({ children }) => {
   const [tournamentId, setTournamentId] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [tournaments, setTournaments] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuthentication = () => {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        setIsAuthenticated(true);
+      }
+    };
+    checkAuthentication();
+  }, []);
 
   const selectTournament = (id) => {
     setTournamentId(id);
@@ -22,6 +33,8 @@ export const TournamentsProvider = ({ children }) => {
         selectTournament,
         isDrawerOpen,
         setIsDrawerOpen,
+        isAuthenticated,
+        setIsAuthenticated,
       }}
     >
       {children}

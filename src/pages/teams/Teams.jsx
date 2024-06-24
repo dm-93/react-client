@@ -11,16 +11,42 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
 import React, { useEffect, useState, useContext } from "react";
 import http from "../../api/http";
 import TeamDialog from "./TeamDialog";
 import TournamentsContext from "../../context/TournamentsContext";
 
+const StatisticsDialog = ({ open, onClose, statistics }) => (
+  <Dialog open={open} onClose={onClose}>
+    <DialogTitle>Статистика Команды</DialogTitle>
+    <DialogContent>
+      {statistics ? (
+        <Box>
+          <Typography>Средний счет: {statistics.averageScore}</Typography>
+          <Typography>Рейтинг: {statistics.rating}</Typography>
+          <Typography>Количество матчей: {statistics.matchesPlayed}</Typography>
+        </Box>
+      ) : (
+        <Typography>Загрузка...</Typography>
+      )}
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose} color="primary">Закрыть</Button>
+    </DialogActions>
+  </Dialog>
+);
+
 export const Teams = () => {
   const { tournamentId } = useContext(TournamentsContext);
   const [teams, setTeams] = useState([]);
   const [openModal, setOpen] = useState(false);
+  const [openStatsModal, setOpenStatsModal] = useState(false);
+  const [teamStatistics, setTeamStatistics] = useState(null);
   const defaultFormObj = {
     teamId: 0,
     tournamentId: tournamentId,
@@ -130,6 +156,23 @@ export const Teams = () => {
     }
   };
 
+  const handleStatsOpen = async (teamId) => {
+    try {
+      const response = await http.get(`/api/teams/statistics?teamId=${teamId}`);
+      if (response.status === 200) {
+        setTeamStatistics(response.data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    setOpenStatsModal(true);
+  };
+
+  const handleStatsClose = () => {
+    setOpenStatsModal(false);
+    setTeamStatistics(null);
+  };
+
   return (
     <Box display="flex" flexWrap="wrap">
       <Box
@@ -196,6 +239,13 @@ export const Teams = () => {
                           >
                             Удалить
                           </Button>
+                          <Button
+                            variant="contained"
+                            onClick={() => handleStatsOpen(team.id)}
+                            style={{ marginLeft: 8 }}
+                          >
+                            Статистика
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -213,6 +263,11 @@ export const Teams = () => {
         isEditing={isEditing}
         open={openModal}
         formData={formData}
+      />
+      <StatisticsDialog
+        open={openStatsModal}
+        onClose={handleStatsClose}
+        statistics={teamStatistics}
       />
     </Box>
   );

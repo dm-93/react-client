@@ -17,7 +17,7 @@ const Registration = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      alert('Пароли не совпадают');
       return;
     }
     try {
@@ -27,10 +27,10 @@ const Registration = () => {
         password: formData.password,
       });
       console.log(response.data);
-      alert('Registration successful');
+      alert('Регистрация успешна');
     } catch (error) {
       console.error(error);
-      alert('Registration failed');
+      alert('Не получилось зарегистрироваться');
     }
   };
 
@@ -38,7 +38,7 @@ const Registration = () => {
     <Container maxWidth="sm">
       <Box sx={{ mt: 5 }}>
         <Typography variant="h4" gutterBottom>
-          Register
+          Регистрация
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField
@@ -53,7 +53,7 @@ const Registration = () => {
           <TextField
             fullWidth
             type="email"
-            label="Email"
+            label="Эл.Адрес"
             name="email"
             value={formData.email}
             onChange={handleChange}
@@ -81,7 +81,7 @@ const Registration = () => {
             required
           />
           <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 3 }}>
-            Register
+            Зарегистрироваться
           </Button>
         </form>
       </Box>

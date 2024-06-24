@@ -21,11 +21,13 @@ import {
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import http from "../../api/http";
+import AddUserModal from "./AddUsersModal";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [editUser, setEditUser] = useState(null);
   const [newRole, setNewRole] = useState("");
+  const [isAddUserModalOpen, setAddUserModalOpen] = useState(false); // State to manage AddUserModal
 
   useEffect(() => {
     const getUsers = async () => {
@@ -74,8 +76,23 @@ const Users = () => {
     }
   };
 
+  const handleOpenAddUserModal = () => {
+    setAddUserModalOpen(true);
+  };
+
+  const handleCloseAddUserModal = () => {
+    setAddUserModalOpen(false);
+  };
+
+  const handleUserAdded = (newUser) => {
+    setUsers([...users, newUser]);
+  };
+
   return (
     <TableContainer component={Paper}>
+      <Button variant="contained" color="primary" onClick={handleOpenAddUserModal}>
+        Добавить пользователя
+      </Button>
       <Table aria-label="users table">
         <TableHead>
           <TableRow>
@@ -157,6 +174,12 @@ const Users = () => {
           </DialogActions>
         </Dialog>
       )}
+
+      <AddUserModal 
+        open={isAddUserModalOpen} 
+        handleClose={handleCloseAddUserModal} 
+        handleUserAdded = {handleUserAdded}
+      />
     </TableContainer>
   );
 };

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { TextField, Button, MenuItem, Box, Typography, Grid, Container } from '@mui/material';
+import http from "../../api/http";
 
 const ProfileSchema = Yup.object().shape({
   firstName: Yup.string().required('Required'),
@@ -23,11 +24,69 @@ const ProfileSchema = Yup.object().shape({
 });
 
 const UserProfile = () => {
+    const [loading, setLoading] = useState(true);
+    const [initialValues, setInitialValues] = useState({
+      firstName: '',
+      lastName: '',
+      age: '',
+      weight: '',
+      gender: '',
+      phone: '',
+      email: '',
+      userPicture: '',
+      address: {
+        country: '',
+        city: '',
+        street: '',
+        postalCode: '',
+        houseNr: '',
+        appartmentNr: '',
+      },
+    });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = http.get(`api/persons/getByEmail?email=test`);
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        setInitialValues({
+          firstName: data.firstName || '',
+          lastName: data.lastName || '',
+          age: data.age || '',
+          weight: data.weight || '',
+          gender: data.gender || '',
+          phone: data.phone || '',
+          email: data.email || '',
+          userPicture: data.userPicture || '',
+          address: {
+            country: data.address.country || '',
+            city: data.address.city || '',
+            street: data.address.street || '',
+            postalCode: data.address.postalCode || '',
+            houseNr: data.address.houseNr || '',
+            appartmentNr: data.address.appartmentNr || '',
+          },
+        });
+      } catch (error) {
+        console.error('There was a problem with your fetch operation:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <Container component="main" maxWidth="md">
       <Box sx={{ mt: 8 }}>
         <Typography component="h1" variant="h5">
-          Edit Profile
+          Изменить информацию пользователя
         </Typography>
         <Formik
           initialValues={{
@@ -60,7 +119,7 @@ const UserProfile = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
-                    label="First Name"
+                    label="Имя"
                     name="firstName"
                     value={values.firstName}
                     onChange={handleChange}
@@ -72,7 +131,7 @@ const UserProfile = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
-                    label="Last Name"
+                    label="Фамилия"
                     name="lastName"
                     value={values.lastName}
                     onChange={handleChange}
@@ -84,7 +143,7 @@ const UserProfile = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
-                    label="Age"
+                    label="Возраст"
                     name="age"
                     type="number"
                     value={values.age}
@@ -97,7 +156,7 @@ const UserProfile = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
-                    label="Weight"
+                    label="Вес"
                     name="weight"
                     type="number"
                     value={values.weight}
@@ -111,7 +170,7 @@ const UserProfile = () => {
                     select
                     fullWidth
                     variant="outlined"
-                    label="Gender"
+                    label="Пол"
                     name="gender"
                     value={values.gender}
                     onChange={handleChange}
@@ -126,7 +185,7 @@ const UserProfile = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
-                    label="Phone"
+                    label="Телефон"
                     name="phone"
                     value={values.phone}
                     onChange={handleChange}
@@ -138,7 +197,7 @@ const UserProfile = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
-                    label="Email"
+                    label="Е-мейл"
                     name="email"
                     value={values.email}
                     onChange={handleChange}
@@ -150,7 +209,7 @@ const UserProfile = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
-                    label="User Picture URL"
+                    label="Загрузите фото"
                     name="userPicture"
                     value={values.userPicture}
                     onChange={handleChange}
@@ -162,7 +221,7 @@ const UserProfile = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
-                    label="Country"
+                    label="Страна"
                     name="address.country"
                     value={values.address.country}
                     onChange={handleChange}
@@ -174,7 +233,7 @@ const UserProfile = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
-                    label="City"
+                    label="Город"
                     name="address.city"
                     value={values.address.city}
                     onChange={handleChange}
@@ -186,7 +245,7 @@ const UserProfile = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
-                    label="Street"
+                    label="Улица"
                     name="address.street"
                     value={values.address.street}
                     onChange={handleChange}
@@ -198,7 +257,7 @@ const UserProfile = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
-                    label="Postal Code"
+                    label="Почтовый код"
                     name="address.postalCode"
                     value={values.address.postalCode}
                     onChange={handleChange}
@@ -210,7 +269,7 @@ const UserProfile = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
-                    label="House Number"
+                    label="Номер дома"
                     name="address.houseNr"
                     value={values.address.houseNr}
                     onChange={handleChange}
@@ -222,7 +281,7 @@ const UserProfile = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
-                    label="Apartment Number"
+                    label="Номер квартиры"
                     name="address.appartmentNr"
                     value={values.address.appartmentNr}
                     onChange={handleChange}
@@ -238,7 +297,7 @@ const UserProfile = () => {
                     color="primary"
                     disabled={isSubmitting}
                   >
-                    Submit
+                    Сохранить
                   </Button>
                 </Grid>
               </Grid>

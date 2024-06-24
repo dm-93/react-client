@@ -20,4 +20,5 @@ export const routes = [
   { path: "/users", name: "Пользователи", element: <Users />, isPrivate: true },
   { path: "/bracket", name: "Турнирная таблица", element: <Bracket />, isPrivate: true },
   { path: "/userProfile", name: "Профиль", element: <UserProfile />, isPrivate: true },
+  { path: "*", name: "всё", element: <Tournaments />, isPrivate: true },
 ];
